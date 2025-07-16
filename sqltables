@@ -1,0 +1,42 @@
+CREATE DATABASE IF NOT EXISTS data;
+USE data;
+-- 1. Provider table
+CREATE TABLE provider (
+  id BIGINT NOT NULL AUTO_INCREMENT,
+  email VARCHAR(255) NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_provider_email (email)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 2. Password history table
+CREATE TABLE password_history (
+  id BIGINT NOT NULL AUTO_INCREMENT,
+  provider_id BIGINT NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP NOT NULL,
+  PRIMARY KEY (id),
+  KEY idx_ph_provider (provider_id),
+  CONSTRAINT fk_ph_provider
+    FOREIGN KEY (provider_id)
+    REFERENCES provider (id)
+    ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 3. OTP token table
+CREATE TABLE otp_token (
+  id BIGINT NOT NULL AUTO_INCREMENT,
+  provider_id BIGINT NOT NULL,
+  otp_code VARCHAR(255) NOT NULL,
+  expires_at TIMESTAMP NOT NULL,
+  PRIMARY KEY (id),
+  KEY idx_otp_provider (provider_id),
+  CONSTRAINT fk_otp_provider
+    FOREIGN KEY (provider_id)
+    REFERENCES provider (id)
+    ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+select * from otp_token;
+select * from password_history;
+select * from Provider;
